@@ -112,52 +112,57 @@ function App() {
         )}
 
         {activeTab === 'graph' && (
-          <div className="space-y-6">
-            <ForceGraph
-              measurements={measurements}
-              currentDisplacement={displacement}
-              currentElasticForce={elasticForce}
-              springConstant={springConstant}
-            />
+          <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+            {/* 왼쪽: 용수철 시각화 */}
+            <div className="xl:col-span-1">
+              <SpringVisualizer
+                currentLength={currentLength}
+                naturalLength={naturalLength}
+                springConstant={springConstant}
+                displacement={displacement}
+                elasticForce={elasticForce}
+                onLengthChange={updateCurrentLength}
+              />
+            </div>
 
-            {/* 간단한 조작 패널 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg shadow-lg p-4">
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">빠른 조작</h3>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-600 mb-1">
-                      현재길이: {currentLength.toFixed(1)} cm
-                    </label>
-                    <input
-                      type="range"
-                      min={5}
-                      max={50}
-                      step={0.1}
-                      value={currentLength}
-                      onChange={(e) => updateCurrentLength(parseFloat(e.target.value))}
-                      className="w-full"
-                    />
-                  </div>
-                  <button
-                    onClick={addMeasurement}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium"
-                  >
-                    현재값 측정 기록
-                  </button>
-                </div>
-              </div>
+            {/* 중앙: 그래프 */}
+            <div className="xl:col-span-2">
+              <ForceGraph
+                measurements={measurements}
+                currentDisplacement={displacement}
+                currentElasticForce={elasticForce}
+                springConstant={springConstant}
+              />
+            </div>
 
+            {/* 오른쪽: 조작 및 측정 패널 */}
+            <div className="xl:col-span-1 space-y-6">
+              {/* 조작 패널 */}
+              <ControlPanel
+                naturalLength={naturalLength}
+                springConstant={springConstant}
+                onNaturalLengthChange={updateNaturalLength}
+                onSpringConstantChange={updateSpringConstant}
+                onReset={resetToDefaults}
+              />
+
+              {/* 측정 패널 */}
+              <MeasurementPanel
+                naturalLength={naturalLength}
+                currentLength={currentLength}
+                displacement={displacement}
+                elasticForce={elasticForce}
+                springConstant={springConstant}
+                onAddMeasurement={addMeasurement}
+              />
+
+              {/* 실험 현황 */}
               <div className="bg-white rounded-lg shadow-lg p-4">
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">실험 현황</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">📊 실험 현황</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">측정점 수:</span>
                     <span className="font-semibold">{measurements.length}개</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">용수철상수:</span>
-                    <span className="font-semibold">{springConstant} N/m</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">현재 변위:</span>
